@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Image Sharing App</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-4">
+
+  <!-- 🔥 NAVBAR MINI -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <a href="/" class="text-decoration-none"><h2 class="text-primary m-0">📸 Chia sẻ ảnh</h2></a>
+
+    <div>
+      <% if (isLoggedIn) { %>
+        <a href="/profile" class="btn btn-info btn-sm text-white me-2">👤 Hồ sơ</a>
+        <a href="/logout" class="btn btn-danger btn-sm">🚪 Đăng xuất</a>
+      <% } else { %>
+        <a href="/login" class="btn btn-primary btn-sm me-2">🔐 Đăng nhập</a>
+        <a href="/register" class="btn btn-success btn-sm">📝 Đăng ký</a>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- 🔥 FORM TÌM KIẾM -->
+  <form action="/" method="GET" class="mb-4">
+    <div class="input-group">
+      <input type="text" name="q" class="form-control" placeholder="Tìm kiếm theo tên ảnh, người dùng..." value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
+      <button type="submit" class="btn btn-secondary">🔍 Tìm kiếm</button>
+    </div>
+  </form>
+
+  <!-- 🔥 KẾT QUẢ TÌM KIẾM NGƯỜI DÙNG -->
+  <% if (typeof foundUsers !== 'undefined' && foundUsers.length > 0) { %>
+    <div class="mb-4">
+      <h5 class="text-primary">👥 Người dùng liên quan</h5>
+      <ul class="list-group">
+        <% foundUsers.forEach(u => { %>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>👤 <strong><%= u.username %></strong></span>
+            <a href="/user/<%= u._id %>" class="btn btn-outline-primary btn-sm">Xem hồ sơ</a>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+  <% } %>
+
+  <!-- 🔥 FORM UPLOAD -->
+  <% if (isLoggedIn) { %>
+    <form action="/upload" method="POST" enctype="multipart/form-data" class="mb-4">
+      <input type="text" name="title" placeholder="Tên ảnh" class="form-control mb-2" required>
+      <input type="file" name="image" class="form-control mb-2" required>
+      <button class="btn btn-success w-100">Upload</button>
+    </form>
+  <% } else { %>
+    <p class="text-center text-muted">👉 Vui lòng đăng nhập để upload ảnh</p>
+  <% } %>
+
+  <!-- 🔥 GRID ẢNH -->
+  <div class="row">
+    <% photos.forEach(photo => { %>
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+          <a href="/photo/<%= photo._id %>">
+  <img src="<%= photo.imageUrl %>" class="card-img-top">
+</a>
+
+
+          <div class="card-body text-center">
+            <h5><%= photo.title %></h5>
+
+            <!-- 🔒 CHỈ CHỦ ẢNH MỚI THẤY NÚT XÓA -->
+            <% if (photo.user && photo.user.toString() === userId) { %>
+			<div class="d-flex justify-content-center gap-2">
+			<a href="/edit/<%= photo._id %>" class="btn btn-warning btn-sm">Sửa</a>
+              <form action="/delete/<%= photo._id %>?_method=DELETE" method="POST">
+                <button class="btn btn-danger btn-sm">Xóa</button>
+              </form>
+			 </div>
+            <% } %>
+
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Chi tiết ảnh</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-4">
+
+  <a href="/" class="btn btn-secondary mb-3">⬅ Quay lại</a>
+
+  <div class="card shadow">
+    <img src="<%= photo.imageUrl %>" class="card-img-top">
+
+    <div class="card-body text-center">
+      <h3><%= photo.title %></h3>
+
+      <p class="text-muted">
+        👤 
+        <% if (photo.user) { %>
+          <a href="/user/<%= photo.user._id %>" class="text-decoration-none fw-bold"><%= photo.user.username %></a>
+        <% } else { %>
+          Ẩn danh
+        <% } %>
+      </p>
+
+      <p class="text-muted">
+        🕒 <%= new Date(photo.createdAt).toLocaleString() %>
+      </p>
+
+      <!-- 🔒 chỉ chủ ảnh mới xóa -->
+      <% if (photo.user && photo.user._id.toString() === userId) { %>
+        <form action="/delete/<%= photo._id %>?_method=DELETE" method="POST">
+          <button class="btn btn-danger">Xóa ảnh</button>
+        </form>
+      <% } %>
+
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
